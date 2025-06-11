@@ -13,7 +13,7 @@ dayjs.extend(timezone);
 @Injectable()
 export class AppointmentService {
 
-  
+
   // private readonly LOCAL_WORK_START_HOUR = 8; // 08:00
   // private readonly LOCAL_WORK_END_HOUR = 18; // 18:00
 
@@ -43,8 +43,18 @@ export class AppointmentService {
   }
 
   async getAvailableSlots(startTimestamp: number, endTimestamp: number, duration: number = DEFAULT_SLOT_INTERVAL): Promise<string[]> {
-    const start = dayjs.unix(startTimestamp).toDate();
-    const end = dayjs.unix(endTimestamp).toDate();
+
+    const start = dayjs(Number(startTimestamp)).toDate();
+    const end = dayjs(Number(endTimestamp)).toDate();
+    const yesterday = dayjs().subtract(1, 'day').toDate();
+
+    if (end < start) {
+      throw new BadRequestException('La fecha de finalización no puede ser anterior a la fecha de inicio');
+    }
+
+    if (start < yesterday) {
+      throw new BadRequestException('La fecha de inicio no puede ser anterior al tiempo actual');
+    }
 
     const allSlots: Date[] = [];
 

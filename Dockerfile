@@ -1,7 +1,7 @@
 FROM node:20-alpine AS base
 WORKDIR /usr/app
 COPY . ./
-RUN npm install
+RUN npm ci install
 RUN npm run build
 
 
